@@ -16,7 +16,7 @@ export default function TransactionCard({time,name,paidBy,totalAmt,yourShare}:{t
             <p className="text-md sm:text-xl">{paidBy} paid {(totalAmt/100).toFixed(2)}</p>
         </div>
         <div className="col-span-3 sm:col-span-3">
-            {yourShare >0 ? <p className="text-md text-green-500 sm:text-xl">you lent {(yourShare/100).toFixed(2)}</p> :<p className="text-md text-red-500 sm:text-xl">you owe {((-1*yourShare)/100).toFixed(2)}</p>}
+            {yourShare >0 ? <p className="text-md text-green-400 sm:text-xl">you lent {(yourShare/100).toFixed(2)}</p> : yourShare ===0 ? <p className="text-slate-400">not involved</p>:<p className="text-md text-red-400 sm:text-xl">you owe {((-1*yourShare)/100).toFixed(2)}</p>}
             
         </div>
     </div>

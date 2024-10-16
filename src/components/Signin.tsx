@@ -137,7 +137,7 @@ export default function Signin(){
               },
             }}/>
             <Button type="submit"
-            className="w-full bg-red-600 hover:bg-red-300">SignIn</Button>
+            className="w-full bg-red-500 hover:bg-red-300 cursor-pointer">SignIn</Button>
             
         
         </CardFooter>
@@ -146,7 +146,7 @@ export default function Signin(){
         
     <Separator className="w-1/4 mb-4"/>
 
-    <Button className="w-[340px] border border-zinc-800 bg-red-600 hover:bg-red-300" onClick={async () => {
+    <Button className="w-[340px] border text-zinc-800 border-zinc-800 bg-red-500 hover:bg-red-300 cursor-pointer" onClick={async () => {
         // await signIn("google");
     }}>Login with google
     </Button>

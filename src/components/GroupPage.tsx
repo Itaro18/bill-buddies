@@ -106,7 +106,6 @@ export default function GroupPage({
 
       
       setTrasnactions(res.data.txns);
-      console.log(trasnactions)
     }
 
     getTxns();
@@ -136,7 +135,6 @@ export default function GroupPage({
     for (let i = 0; i < users.length; i++) {
       let x: number = data.amount / users.length;
       x = Math.round((x + Number.EPSILON) * 100) / 100;
-      console.log(x);
       userExpenses.push({
         id: users[i].id,
         share: x.toString(),
@@ -173,6 +171,7 @@ export default function GroupPage({
       const res = await axios.post("/api/simplify", {
         grpId: id,
       });
+      console.log(res.data.ledger)
       setLedger(res.data.ledger)
     }
     getLedger();
@@ -180,7 +179,6 @@ export default function GroupPage({
 
   let counter=0;
   const settler = async () => {
-    console.log("ash;d");
     const res = await axios.get("/api/transactions", {
       headers:{
         id
@@ -188,6 +186,11 @@ export default function GroupPage({
     });
     // console.log(res.data.ledger);
   };
+
+  let total=0;
+  for(let i=0;i<ledger.length;i++){
+    total+=ledger[i][1]
+  }
 
   return (
     <div className="w-4/5 sm:w-3/5 max-w-2xl py-10 mt-24">
@@ -205,7 +208,7 @@ export default function GroupPage({
         </div>
         <div className="self-end w-2/3">
           <h1 className="text-3xl sm:text-5xl text-red-600 mb-1">{title}</h1>
-          <p className="text-xl sm:text-2xl">You owe balance</p>
+          {total>0 ?<p className="text-xl text-green-400 sm:text-2xl">You are owed {(total/100).toFixed(2)} overall</p> : total===0 ? <p className="text-xl text-slate-400 sm:text-2xl">You are all settled up</p>:<p className="text-xl text-red-400 sm:text-2xl">You owe {((-1*total)/100).toFixed(2)} overall</p>}
         </div>
       </div>
       <div className="w-full px-14 my-4 grid gap-1 sm:text-xl">
@@ -217,14 +220,13 @@ export default function GroupPage({
           ledger.map((entry,index)=>{
             const name=nameMap.get(entry[0])
             const amt=entry[1] >0 ? (entry[1]/100):(entry[1]/100)*-1
-            console.log(ledger.length)
             if(entry[1]>0){
               counter++;
-              return <p key={index}>{name} ows you <span className="text-green-500">{amt.toFixed(2)}</span></p>
+              return <p key={index}>{name} ows you <span className="text-green-400">{amt.toFixed(2)}</span></p>
             }
             else if(entry[1]<0){
               counter++;
-              return <p key={index}>You owe {name} <span  className="text-red-500">{amt.toFixed(2)}</span></p>
+              return <p key={index}>You owe {name} <span  className="text-red-400">{amt.toFixed(2)}</span></p>
             }
             
           })

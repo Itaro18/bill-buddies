@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function Appbar() {
   const router = useRouter();
   return (
-    <div className="flex w-4/5 max-w-2xl items-center justify-between bg-red-600 px-3 py-2  rounded-3xl text-md fixed top-10">
+    <div className="flex w-4/5 max-w-2xl items-center justify-between bg-red-600 px-4 py-1  rounded-[34px] text-md fixed top-10">
       <div>
         <p className="text-lg sm:text-2xl ml-4 cursor-pointer">BillBuddies</p>
       </div>
