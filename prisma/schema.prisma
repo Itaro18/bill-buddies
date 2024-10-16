@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  groups       Group[]       @relation("UserGroups")
+  expenses     Expense[]
+  userExpenses UserExpense[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Group {
+  id           String    @id @default(uuid())
+  name         String
+  users        User[]    @relation("UserGroups")
+  expenses     Expense[]
+  userExpenses UserExpense[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  inviteCode   String    @default("")
+  inviteExpiry DateTime  @default(now())
+}
+
+model Expense {
+  id           String        @id @default(uuid())
+  description  String
+  amount       Float
+  date         DateTime
+  paidBy       User          @relation(fields: [paidById], references: [id])
+  paidById     String
+  group        Group         @relation(fields: [groupId], references: [id])
+  groupId      String
+  userExpenses UserExpense[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model UserExpense {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  expense   Expense  @relation(fields: [expenseId], references: [id])
+  expenseId String
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   String
+  amount    Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
