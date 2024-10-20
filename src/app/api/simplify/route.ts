@@ -22,7 +22,7 @@ async function PayerMaper(expenseList: { expenseId: string, id: string }[]) {
     return payers;
 }
 
-function DataMapper(payerMap: Map<string, string>, txns: { expenseId: string, id: string, userId: string, amount: number }[]) {
+function DataMapper(payerMap: Map<string, string>, txns: { expenseId: string, id: string, userId: string, amount: number ,groupId: string,  createdAt: Date, updatedAt: Date ,expense:{isSettlement:boolean}}[]) {
     const finalData = []
     for (let i = 0; i < txns.length; i++) {
         if (txns[i].userId === payerMap.get(txns[i].id)) {
@@ -32,13 +32,14 @@ function DataMapper(payerMap: Map<string, string>, txns: { expenseId: string, id
             const payer = payerMap.get(txns[i].id)
             const paidFor = txns[i].userId
             const amt = txns[i].amount
-            finalData.push({ paidFor, payer, amt })
+            const isSettlement =txns[i].expense.isSettlement
+            finalData.push({ paidFor, payer, amt ,isSettlement})
         }
     }
     return finalData
 }
 
-function ledgerMaker(arr: { paidFor: string, payer: string | undefined, amt: number }[],userId:string,users:{id:string}[]) {
+function ledgerMaker(arr: { paidFor: string, payer: string | undefined, amt: number ,isSettlement:boolean}[],userId:string,users:{id:string}[]) {
     const ledger =new Map()
     for(let i=0;i<users.length;i++){
         ledger.set(users[i].id,0)
@@ -67,6 +68,7 @@ export async function POST(req: NextRequest) {
     const grpId = body.grpId
     const userId = session.user.id
     
+    
     try {
        
         const check = await prisma.user.findUnique({
@@ -87,14 +89,14 @@ export async function POST(req: NextRequest) {
             where: {
                 groupId: grpId
             },
-            select: {
-                expenseId: true,
-                id: true,
-                userId: true,
-                amount: true
+            include:{
+                expense:{
+                    select:{
+                        isSettlement:true
+                    }
+                }
             }
         })
-        
         const payerMap = await PayerMaper(txns)
         const finalData = DataMapper(payerMap, txns)
         const data =await prisma.group.findUnique({
@@ -103,10 +105,10 @@ export async function POST(req: NextRequest) {
             },
             include:{
                 users:{
-                select:{
-                    id:true,
-                    name:true
-                }
+                    select:{
+                        id:true,
+                        name:true
+                    }
                 }
             }
         })

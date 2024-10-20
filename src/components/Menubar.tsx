@@ -13,7 +13,7 @@ export default function Menubar() {
       <div className="flex items-center gap-x-2 ">
         <SelectTheme />
         <Button
-          className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] hover:invert"
+          className="rounded-2xl shadow-[3px_3px_0px_1px_#718096]"
           onClick={() => signOut()}
         >
           Logout

@@ -12,11 +12,11 @@ export default function TransactionCard({time,name,paidBy,totalAmt,yourShare}:{t
             <p className="text-lg sm:text-2xl">{formatedDate}</p>
         </div>
         <div className=" col-span-5 sm:col-span-6 ml-4">
-            <h1 className="text-lg sm:text-2xl">{name[0].toUpperCase()+name.slice(1)}</h1>
-            <p className="text-md sm:text-xl">{paidBy} paid {(totalAmt/100).toFixed(2)}</p>
+            <h1 className="text-md sm:text-2xl">{name[0].toUpperCase()+name.slice(1).toLowerCase()}</h1>
+            <p className="text-sm sm:text-xl">{paidBy} paid {(totalAmt/100).toFixed(2)}</p>
         </div>
         <div className="col-span-3 sm:col-span-3">
-            {yourShare >0 ? <p className="text-md text-green-400 sm:text-xl">you lent {(yourShare/100).toFixed(2)}</p> : yourShare ===0 ? <p className="text-slate-400">not involved</p>:<p className="text-md text-red-400 sm:text-xl">you owe {((-1*yourShare)/100).toFixed(2)}</p>}
+            {yourShare >0 ? <p className="text-sm text-green-400 sm:text-xl">you lent {(yourShare/100).toFixed(2)}</p> : yourShare ===0 ? <p className="text-slate-400">not involved</p>:<p className="text-md text-red-400 sm:text-xl">you owe {((-1*yourShare)/100).toFixed(2)}</p>}
             
         </div>
     </div>

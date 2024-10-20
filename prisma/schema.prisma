@@ -47,6 +47,7 @@ model Expense {
   group        Group         @relation(fields: [groupId], references: [id])
   groupId      String
   userExpenses UserExpense[]
+  isSettlement Boolean
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }

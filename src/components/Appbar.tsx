@@ -13,7 +13,7 @@ export default function Appbar() {
       <div className="flex items-center gap-2">
         <SelectTheme />
         <Button
-          className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] hover:invert"
+          className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] "
           onClick={() => router.push("/signup")}
         >
           Start Splitting

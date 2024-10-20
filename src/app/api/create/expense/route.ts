@@ -17,7 +17,8 @@ const expenseEntrySchema=z.object({
     userExpenses:z.array(z.object({
         id:z.string(),
         share:z.string()
-    }))
+    })),
+    isSettlement:z.boolean()
 
 })
 const prisma=new PrismaClient()
@@ -51,6 +52,10 @@ export async function POST(request:NextRequest){
         //         }))
         //     }
         // })
+
+        if(result.data.isSettlement){
+            return NextResponse.json({ error: "Something went wrong! Please try again later" }, { status: 500 })
+        }
         
         const res=await prisma.expense.create({
             data:{
@@ -59,6 +64,7 @@ export async function POST(request:NextRequest){
                 date: new Date(result.data.time),
                 paidById: result.data.id,
                 groupId:result.data.grpId,
+                isSettlement:false,
                 userExpenses: {
                     create: result.data.userExpenses.map(ue => ({
                         userId: ue.id,

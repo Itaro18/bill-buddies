@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import TransactionCard from "./ui/tranactionCard";
+import SettlementCard from "./ui/settlementCard";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import {
@@ -14,13 +15,6 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Copy } from "lucide-react";
@@ -29,22 +23,26 @@ import { useSession } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { expenseSchema, expenseType } from "@/lib/validators/create.validator";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {z} from 'zod'
 
-// import {
-//   Form,
-//   FormControl,
-//   FormDescription,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
+
 type outData={
   time:Date;
   description:string;
   paidById:string;
   amount:number;
-  share:number
+  share:number;
+  isSettlement:boolean;
+  paidFor:string[]
 }
 
 export default function GroupPage({
@@ -62,8 +60,12 @@ export default function GroupPage({
 }) {
   const session = useSession();
 
-  
-
+  const ids =users.map((user)=>user.id) ;
+  const FormSchema = z.object({
+    owedTo: z.enum(ids as [string, ...string[]], {
+      required_error: "You need to select an Option",
+    }),
+  })
 
   const info: { name: string; email: string; id: string } =
     session.data?.user || {};
@@ -153,6 +155,7 @@ export default function GroupPage({
       time,
       ...payer[0],
       userExpenses,
+      isSettlement:false
     };
     const response = await axios.post("/api/create/expense", body);
     if (response.status === 201) {
@@ -171,7 +174,6 @@ export default function GroupPage({
       const res = await axios.post("/api/simplify", {
         grpId: id,
       });
-      console.log(res.data.ledger)
       setLedger(res.data.ledger)
     }
     getLedger();
@@ -179,18 +181,48 @@ export default function GroupPage({
 
   let counter=0;
   const settler = async () => {
-    const res = await axios.get("/api/transactions", {
-      headers:{
-        id
-      }
+    const res = await axios.post("/api/simplify", {
+      grpId:id
     });
-    // console.log(res.data.ledger);
   };
 
   let total=0;
+  let owed=0;
   for(let i=0;i<ledger.length;i++){
     total+=ledger[i][1]
+    if(ledger[i][1]<0){
+      owed=1;
+    }
   }
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+  })
+  async function onSettle(data: z.infer<typeof FormSchema>) {
+    let amt;
+    for(let i=0;i<ledger.length;i++){
+      if(ledger[i][0]=== data.owedTo){
+        amt=-1*ledger[i][1];
+      }
+        
+    }
+    const res= await axios.post("/api/create/settlement",{
+      amount:amt,
+      grpId:id,
+      id:info.id,
+      toId:data.owedTo,
+    })
+    if(res.data.message){
+      toast.success("Settlement Recorded", {
+        duration: 3000,
+      });
+    }
+    else{
+      toast.error("Settlement couldn't be done,Try later", {
+        duration: 3000,
+      })
+    }
+  }
+  
 
   return (
     <div className="w-4/5 sm:w-3/5 max-w-2xl py-10 mt-24">
@@ -212,10 +244,6 @@ export default function GroupPage({
         </div>
       </div>
       <div className="w-full px-14 my-4 grid gap-1 sm:text-xl">
-        {/* <p> You owe abc 2000</p>
-        <p> You owe abc 2000</p>
-        <p> You owe abc 2000</p>
-        <p> You owe abc 2000</p> */}
         {
           ledger.map((entry,index)=>{
             const name=nameMap.get(entry[0])
@@ -235,16 +263,99 @@ export default function GroupPage({
           counter ? <p></p> :<p className="my-10">You are settled up with everyone </p>
         }
       </div>
-      <div className="w-full flex justify-end">
-        <Button
-          className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] hover:invert mr-8"
-          onClick={settler}
-        >
-          Settle
-        </Button>
+      <div className="w-full flex justify-end gap-x-4">
+        
+
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] hover:invert mr-8">
+              <Button
+              className="rounded-2xl shadow-[3px_3px_0px_1px_#718096]  "
+              >
+                Settle
+              </Button>
+          </DialogTrigger>
+          {owed===0 ? (<DialogContent className="w-4/5 sm:max-w-[425px] bg-white text-black dark:text-white dark:bg-black rounded-md">
+            <DialogHeader>
+              <DialogTitle>Settled Up</DialogTitle>
+              <DialogDescription>
+                You are settled up with everyone
+              </DialogDescription>
+            </DialogHeader>
+            </DialogContent>):
+          (<DialogContent className="w-4/5 sm:max-w-[425px] bg-white text-black dark:text-white dark:bg-black rounded-md">
+            <DialogHeader>
+              <DialogTitle>Settle Up</DialogTitle>
+              <DialogDescription>
+                who are you settling up with?
+              </DialogDescription>
+            </DialogHeader>
+
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSettle)} className="w-full space-y-6">
+                <FormField
+                  control={form.control}
+                  name="owedTo"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Select a buddy whom you want to settle up with</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          { ledger.length !=0 ?
+                            (ledger.map((entry)=>{
+                              if(entry[0]===info.id ||  entry[1]>=0 ){
+                                return null
+                              }
+                              return (
+                                <FormItem className="flex items-center space-x-3 space-y-0">
+                                  <FormLabel className="font-normal flex w-full items-center">
+                                    <p className="w-4/5 text-lg">{nameMap.get(entry[0])}</p> 
+                                     <p className=" text-lg sm:ml-6">{((-1*entry[1])/100).toFixed(2)}</p> 
+                                  </FormLabel>
+                                  <FormControl>
+                                    <RadioGroupItem value={entry[0]} />
+                                  </FormControl>
+                                </FormItem>
+                              )
+                            })):
+                            <p className="text-green-400">You are Settled Up With everyone</p>
+                          }
+                          
+                          {/* <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormLabel className="font-normal">
+                              Direct messages and mentions
+                            </FormLabel>
+                            <FormControl>
+                              <RadioGroupItem value="mentions" />
+                            </FormControl>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormLabel className="font-normal">Nothing</FormLabel>
+                            <FormControl>
+                              <RadioGroupItem value="none" />
+                            </FormControl>
+                          </FormItem> */}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogClose asChild>
+                  <Button type="submit">Settle</Button>
+                </DialogClose>
+              </form>
+            </Form>
+              
+            <DialogFooter className="mx-auto"></DialogFooter>
+          </DialogContent>)}
+        </Dialog>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] ">
               Add Buddy
             </Button>
           </DialogTrigger>
@@ -256,16 +367,6 @@ export default function GroupPage({
               </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
-              {/* <Button
-                className="mx-auto rounded-2xl hover:invert  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg"
-                onClick={() => {
-                  console.log(code)
-                  return <p>{code}</p>;
-                }}
-              >
-                Genearate
-              </Button> */}
-              {/* <p className="mx-auto tracking-widest bg-slate-500 p-3 rounded-md">{code}</p> */}
               <div className="w-full relative">
                 <div className="absolute rounded-s-md w-1 inset-y-0 " />
                 <pre className="rounded-md text-sm sm:text-base !bg-[#151515] px-4 sm:px-6 md:px-8 whitespace-pre-wrap break-word flex justify-between">
@@ -285,7 +386,7 @@ export default function GroupPage({
 
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] hover:invert ">
+            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
               Add Transaction
             </Button>
           </DialogTrigger>
@@ -349,7 +450,7 @@ export default function GroupPage({
                 <DialogClose asChild>
                   <Button
                     type="submit"
-                    className="mx-auto rounded-2xl hover:invert  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg"
+                    className="mx-auto rounded-2xl  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg"
                   >
                     Split
                   </Button>
@@ -363,7 +464,13 @@ export default function GroupPage({
       <div className="my-4 px-10">
         {
           trasnactions.map((txn)=>{
-            return (<TransactionCard
+            return ( txn.isSettlement ? <SettlementCard
+              time={txn.time}
+              paidBy={nameMap.get(txn.paidById)}
+              totalAmt={txn.amount}
+              paidFor={nameMap.get(txn.paidFor[0])}
+            ></SettlementCard>
+            :<TransactionCard
               time={txn.time}
               name={txn.description}
               paidBy={nameMap.get(txn.paidById)}
@@ -372,111 +479,6 @@ export default function GroupPage({
             ></TransactionCard>)
           })
         }
-        {/* <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard>
-        <TransactionCard
-          date="Sept 19"
-          name="Food"
-          paidBy="abc"
-          totalAmt="100"
-          yourShare="10rs"
-        ></TransactionCard> */}
       </div>
       <Toaster
         toastOptions={{

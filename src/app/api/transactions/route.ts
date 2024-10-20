@@ -17,6 +17,7 @@ type userTxn={
     groupId:string;
     createdAt:Date;
     updatedAt:Date;
+    isSettlement:boolean;
     userExpenses:{
         userId:string;
         amount:number;       
@@ -29,6 +30,8 @@ type outData={
     paidById:string;
     amount:number;
     share:number
+    isSettlement:boolean;
+    paidFor :string[]
 }
 
 function processTxns(userTxns:userTxn[],id:string){
@@ -40,14 +43,19 @@ function processTxns(userTxns:userTxn[],id:string){
         const description =userTxns[i].description;
         const paidById = userTxns[i].paidById;
         const amount = userTxns[i].amount
+        const isSettlement=userTxns[i].isSettlement
         let share = 0
+        const paidFor:string[]= []
         for(let j=0;j<userTxns[i].userExpenses.length;j++){
-            if(userTxns[i].userExpenses[j].userId===id){
+            if(!isSettlement && userTxns[i].userExpenses[j].userId===id){
                 share = id === paidById ? amount - userTxns[i].userExpenses[j].amount : userTxns[i].userExpenses[j].amount
+            }
+            if( userTxns[i].userExpenses[j].userId !== paidById){
+                paidFor.push(userTxns[i].userExpenses[j].userId)
             }
         }
 
-        arr.push({time ,description,paidById,amount,share})
+        arr.push({time ,description,paidById,amount,share,isSettlement,paidFor})
     }
 
     return arr;
@@ -92,8 +100,6 @@ export async function GET(){
         })
 
         if(txns){
-            console.log(txns[0].userExpenses)
-            console.log(txns)
             // let userTxns = await prisma.userExpense.findMany({
             //     where:{
             //         groupId:grpId,
@@ -113,7 +119,7 @@ export async function GET(){
             // to-do remove after advanced split
             // userTxns = userTxns?.filter((txn) => txn?.userId === session.user.id);
             const res = processTxns(txns,userId) 
-            res.reverse()
+            res.sort((a:outData,b:outData) =>  b.time.getTime() - a.time.getTime() )
             return NextResponse.json({ txns: res }, { status: 200 })
         }
 
