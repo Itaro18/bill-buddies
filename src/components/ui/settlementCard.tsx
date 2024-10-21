@@ -11,7 +11,7 @@ export default function SettlementCard({time,paidBy,totalAmt,paidFor}:{time:Date
         <div className="col-span-2 sm:col-span-2 p-1 mr-1 text-center">
             <p className="text-md sm:text-2xl">{formatedDate}</p>
         </div>
-        <div className=" col-span-5 sm:col-span-8 ml-4">
+        <div className=" col-span-8 sm:col-span-8 ml-4">
             <p className="text-sm tracking-wider sm:text-xl">{paidBy} settled up with {paidFor} by paing  {(totalAmt/100).toFixed(2)}</p>
         </div>
     </div>

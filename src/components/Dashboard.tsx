@@ -131,7 +131,7 @@ export default function DashboardContent() {
                     }}
                     id="code"
                     placeholder="123456789"
-                    className="col-span-3"
+                    className="col-span-3 border-b-4"
 
                   />
                   
@@ -180,7 +180,7 @@ export default function DashboardContent() {
                     {...register("name")}
                     id="name"
                     placeholder="Goa-Trip"
-                    className="col-span-3"
+                    className="col-span-3 border-b-4"
                   />
                   {errors.name && (
                     <p className="text-red-600 w-full">

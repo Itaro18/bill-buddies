@@ -16,7 +16,9 @@ export const expenseSchema=z.object({
     amount:z.number().refine(x => x * 100 - Math.trunc(x * 100)< Number.EPSILON,{
         message:"only 2 deciaml places allowed"
     }),
-    payer:z.string() 
+    payer:z.string(), 
+    splitEqually:z.boolean(),
+    splits:z.record(z.string(), z.number().min(0, "Amount must be non-negative"))
 })
 
 

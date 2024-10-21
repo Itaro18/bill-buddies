@@ -20,7 +20,7 @@ import axios from "axios";
 import { Copy } from "lucide-react";
 import { Toaster, toast } from "sonner";
 import { useSession } from "next-auth/react";
-import { useForm } from "react-hook-form";
+import { useForm,Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { expenseSchema, expenseType } from "@/lib/validators/create.validator";
 import {
@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/form"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import {z} from 'zod'
+import { Checkbox } from "@/components/ui/checkbox"
 
 
 type outData={
@@ -127,12 +128,33 @@ export default function GroupPage({
   const {
     register,
     handleSubmit,
+    control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<expenseType>({
     resolver: zodResolver(expenseSchema),
+    defaultValues: {
+      description: "",
+      amount: 0,
+      payer: "",
+      splitEqually: false,
+      splits: Object.fromEntries(users.map(user => [user.id, 0.00])),
+    }
   });
 
+  const watchSplitEqually = watch("splitEqually");
+  const watchAmount = watch ("amount")
+
+  // useEffect(() => {
+  //   const splitAmount = watchSplitEqually ? watchAmount / users.length : 0;
+  //   users.forEach(user => {
+  //     setValue(`splits.${user.id}`, splitAmount, { shouldValidate: true });
+  //   });
+  // }, [watchSplitEqually, watchAmount, users, setValue]);
+
   const onSubmit = async (data: expenseType) => {
+    console.log("here",data)
     const userExpenses: { id: string; share: string }[] = [];
     for (let i = 0; i < users.length; i++) {
       let x: number = data.amount / users.length;
@@ -157,16 +179,17 @@ export default function GroupPage({
       userExpenses,
       isSettlement:false
     };
-    const response = await axios.post("/api/create/expense", body);
-    if (response.status === 201) {
-      toast.success("Transction Recorded", {
-        duration: 3000,
-      });
-    } else {
-      toast.error("Transction couldn't Recorded,Try later", {
-        duration: 3000,
-      });
-    }
+    
+    // const response = await axios.post("/api/create/expense", body);
+    // if (response.status === 201) {
+    //   toast.success("Transction Recorded", {
+    //     duration: 3000,
+    //   });
+    // } else {
+    //   toast.error("Transction couldn't Recorded,Try later", {
+    //     duration: 3000,
+    //   });
+    // }
   };
 
   useEffect(()=>{
@@ -323,21 +346,7 @@ export default function GroupPage({
                             })):
                             <p className="text-green-400">You are Settled Up With everyone</p>
                           }
-                          
-                          {/* <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormLabel className="font-normal">
-                              Direct messages and mentions
-                            </FormLabel>
-                            <FormControl>
-                              <RadioGroupItem value="mentions" />
-                            </FormControl>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormLabel className="font-normal">Nothing</FormLabel>
-                            <FormControl>
-                              <RadioGroupItem value="none" />
-                            </FormControl>
-                          </FormItem> */}
+
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
@@ -405,7 +414,7 @@ export default function GroupPage({
                     {...register("description")}
                     id="description"
                     placeholder="Enter a Description"
-                    className="col-span-4 w-full"
+                    className="col-span-4 w-full border-b-4"
                   />
                   {errors.description && (
                     <p className="text-red-600 w-full ">
@@ -419,7 +428,7 @@ export default function GroupPage({
                     {...register("amount", { valueAsNumber: true })}
                     id="amount"
                     placeholder="100"
-                    className=" w-62"
+                    className=" w-62 border-b-4"
                   />
                   {errors.amount && (
                     <p className="text-red-600 w-full ">
@@ -431,7 +440,7 @@ export default function GroupPage({
                   </Label>
                   <select
                     {...register("payer")}
-                    className="w-56 block bg-transparent border-2 p-2 rounded-md"
+                    className="w-56 block bg-transparent border-2 p-2 rounded-md border-b-4"
                   >
                     {users.map((user, index) => (
                       <option key={index} value={user.name}>
@@ -445,12 +454,57 @@ export default function GroupPage({
                     </p>
                   )}
                 </div>
+                <div className="flex items-center"> 
+                <Controller
+                  name="splitEqually"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={(checked) => {
+                        field.onChange(checked);
+                        if (checked) {
+                          const splitAmount = Math.round(((watchAmount/users.length) + Number.EPSILON) * 100) / 100;
+                          users.forEach(user => {
+                            setValue(`splits.${user.id}`, splitAmount, { shouldValidate: true });
+                          });
+                        }
+                      }}
+                      id="splitEqually"
+                    />
+                  )}
+                />
+                  <Label className="text-md ml-3">Split Equally</Label>
+                </div>
+                
+              </div>
+              <div className="border-t-2  border-red-500 rounded-sm my-4"></div>
+              <div>
+                {
+                  users.map((user)=>{
+                    
+                    return (
+                      <div className="flex items-center justify-between">
+                        <p className="text-xl m-2">{user.name}</p>
+                        <Input
+                            key={user.id}
+                            {...register(`splits.${user.id}`, { valueAsNumber: true })}
+                            id={user.id}
+                            placeholder="0.00"
+                            className="w-24"
+                            disabled={watchSplitEqually}
+                        />
+                      </div>
+                    )
+                    
+                  })
+                }
               </div>
               <DialogFooter className="mx-auto">
                 <DialogClose asChild>
                   <Button
                     type="submit"
-                    className="mx-auto rounded-2xl  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg"
+                    className="mx-auto rounded-2xl  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg mt-4"
                   >
                     Split
                   </Button>
