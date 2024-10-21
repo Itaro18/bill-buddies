@@ -145,13 +145,17 @@ export default function GroupPage({
 
   const watchSplitEqually = watch("splitEqually");
   const watchAmount = watch ("amount")
+  const watchSplits=watch("splits")
 
+  const [sum,setSum]=useState(0)
   // useEffect(() => {
   //   const splitAmount = watchSplitEqually ? watchAmount / users.length : 0;
   //   users.forEach(user => {
   //     setValue(`splits.${user.id}`, splitAmount, { shouldValidate: true });
   //   });
   // }, [watchSplitEqually, watchAmount, users, setValue]);
+
+ 
 
   const onSubmit = async (data: expenseType) => {
     console.log("here",data)
@@ -425,10 +429,23 @@ export default function GroupPage({
                     TotalAmt
                   </Label>
                   <Input
-                    {...register("amount", { valueAsNumber: true })}
+                    {...register("amount",{valueAsNumber:true})}
                     id="amount"
                     placeholder="100"
-                    className=" w-62 border-b-4"
+                    className=" w-62 border-b-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    type="number"
+                    step="0.01"
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if(isNaN(parseFloat(value))){
+                        setValue("amount",0);
+                        
+                      }else{
+                        setValue("amount",parseFloat(parseFloat(value).toFixed(2)))
+                      }
+                      
+                      
+                    }}
                   />
                   {errors.amount && (
                     <p className="text-red-600 w-full ">
@@ -468,6 +485,13 @@ export default function GroupPage({
                           users.forEach(user => {
                             setValue(`splits.${user.id}`, splitAmount, { shouldValidate: true });
                           });
+                          setSum(watchAmount)
+                        }
+                        else{
+                          setSum(0)
+                          users.forEach(user => {
+                            setValue(`splits.${user.id}`, 0, { shouldValidate: true });
+                          });
                         }
                       }}
                       id="splitEqually"
@@ -491,14 +515,26 @@ export default function GroupPage({
                             {...register(`splits.${user.id}`, { valueAsNumber: true })}
                             id={user.id}
                             placeholder="0.00"
-                            className="w-24"
+                            className="w-24 border-b-4 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             disabled={watchSplitEqually}
+                            type="number"
+                            step="0.01"
+                            inputMode="numeric"
+                            onChange={(e)=>{
+                              const value=e.target.value
+                              setValue(`splits.${user.id}`,Number(Number(value).toFixed(2)))
+                              const totalSplit = Object.values(watchSplits).reduce((sum, value) => sum + (Number(value) || 0), 0);
+                              setSum(totalSplit)
+                            }}
                         />
                       </div>
                     )
                     
                   })
                 }
+              </div>
+              <div className="w-full flex justify-center">
+                <p className="">{(watchAmount-sum).toFixed(2)} left of {watchAmount.toFixed(2)}</p>
               </div>
               <DialogFooter className="mx-auto">
                 <DialogClose asChild>

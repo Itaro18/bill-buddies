@@ -13,7 +13,7 @@ export const inviteSchema=z.object({
 
 export const expenseSchema=z.object({
     description:z.string().min(1,'Description should have a min length of 1'),
-    amount:z.number().refine(x => x * 100 - Math.trunc(x * 100)< Number.EPSILON,{
+    amount:z.number().min(0, "Amount must be non-negative").refine(x => x * 100 - Math.trunc(x * 100)< Number.EPSILON,{
         message:"only 2 deciaml places allowed"
     }),
     payer:z.string(), 
