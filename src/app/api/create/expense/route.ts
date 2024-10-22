@@ -16,7 +16,7 @@ const expenseEntrySchema=z.object({
     email:z.string().email(),
     userExpenses:z.array(z.object({
         id:z.string(),
-        share:z.string()
+        share:z.number()
     })),
     isSettlement:z.boolean()
 
@@ -39,6 +39,8 @@ export async function POST(request:NextRequest){
                 }
             );
         }
+        console.log("here")
+        
         // console.log({
         //     description:result.data.description,
         //     amount:result.data.amount,
@@ -68,7 +70,7 @@ export async function POST(request:NextRequest){
                 userExpenses: {
                     create: result.data.userExpenses.map(ue => ({
                         userId: ue.id,
-                        amount: parseFloat(ue.share)*100,
+                        amount: ue.share*100,
                         groupId : result.data.grpId
                     }))
                 }

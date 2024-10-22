@@ -31,7 +31,11 @@ type outData={
     amount:number;
     share:number
     isSettlement:boolean;
-    paidFor :string[]
+    paidFor :string[];
+    userExpenses:{
+        userId:string;
+        amount:number;       
+    }[]
 }
 
 function processTxns(userTxns:userTxn[],id:string){
@@ -54,8 +58,8 @@ function processTxns(userTxns:userTxn[],id:string){
                 paidFor.push(userTxns[i].userExpenses[j].userId)
             }
         }
-
-        arr.push({time ,description,paidById,amount,share,isSettlement,paidFor})
+        const userExpenses=userTxns[i].userExpenses
+        arr.push({time ,description,paidById,amount,share,isSettlement,paidFor,userExpenses})
     }
 
     return arr;
@@ -119,6 +123,7 @@ export async function GET(){
             // to-do remove after advanced split
             // userTxns = userTxns?.filter((txn) => txn?.userId === session.user.id);
             const res = processTxns(txns,userId) 
+
             res.sort((a:outData,b:outData) =>  b.time.getTime() - a.time.getTime() )
             return NextResponse.json({ txns: res }, { status: 200 })
         }
