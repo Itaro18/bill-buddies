@@ -1,4 +1,4 @@
-export default function SettlementCard({time,paidBy,totalAmt,paidFor}:{time:Date,paidBy:string,totalAmt:number,paidFor:string}){
+export default function SettlementCard({txnId,time,paidBy,totalAmt,paidFor}:{txnId:string,time:Date,paidBy:string,totalAmt:number,paidFor:string}){
     const date= new Date(time)
     const month   = date.getMonth();
     const day = date.getUTCDate().toString().padStart(2, '0');

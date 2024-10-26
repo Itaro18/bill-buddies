@@ -1,7 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { NEXT_AUTH_CONFIG } from "@/lib/auth";
-import { NextRequest, NextResponse } from "next/server";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 const prisma = new PrismaClient()
 
@@ -61,16 +58,8 @@ function ledgerMaker(arr: { paidFor: string, payer: string | undefined, amt: num
 }
 
 
-
-export async function POST(req: NextRequest) {
-    const session =await getServerSession(NEXT_AUTH_CONFIG)
-    const body = await req.json()
-    const grpId = body.grpId
-    const userId = session.user.id
-    
-    
-    try {
-       
+export async function simplify(grpId:string){
+    try{
         const check = await prisma.user.findUnique({
             where: {
                 id: userId,
@@ -122,11 +111,10 @@ export async function POST(req: NextRequest) {
         result.forEach((value, key) => {
             res.push([key,value])
         })
-        
-
-        return NextResponse.json({ ledger:res }, { status: 200 })
     }
-    catch (e: any) {
-        return NextResponse.json({ message: "somehting went wrong" }, { status: 500 })
+    catch(e){
+        return{
+            error:"something went wrong"
+        }
     }
 }

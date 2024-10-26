@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
-export default function Group({title,balance,grpId}:{title:string,balance:string,grpId:string}){
+export default function Group({title,grpId,total}:{title:string,grpId:string,total:number}){
     const router = useRouter()
     return <div  onClick={()=>{
        router.push(`/group/${grpId}`)
@@ -18,7 +18,19 @@ export default function Group({title,balance,grpId}:{title:string,balance:string
         </div>
         <div className='col-span-3'>
             <h1 className='text-xl sm:text-2xl text-red-600 mb-1'>{title}</h1>
-            <p>You owe {balance}</p>
+            {total > 0 ? (
+                <p className="text-xl text-green-400 sm:text-2xl">
+                You are owed {(total / 100).toFixed(2)} overall
+                </p>
+            ) : total === 0 ? (
+                <p className="text-xl text-slate-400 sm:text-2xl">
+                You are all settled up
+                </p>
+            ) : (
+                <p className="text-xl text-red-400 sm:text-2xl">
+                You owe {((-1 * total) / 100).toFixed(2)} overall
+                </p>
+            )}
         </div>
     </div>
 }

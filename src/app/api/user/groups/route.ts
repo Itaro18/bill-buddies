@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 // import {z} from 'zod';
 import { ErrorHandler } from "@/lib/error";
 import { PrismaClient } from "@prisma/client";
+import {simplify} from "@/app/services/expenseService"
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 // const groupsSchema = z.object({
@@ -24,11 +25,21 @@ export async function GET() {
             }
         })
       
-        const names = res?.groups.map((group) =>{
-
+        const names = res?.groups.map(async (group) =>{
+            const txns = await simplify( 
+                group.id,
+              );
+              let ledger=txns.data.ledger;
+              let total = 0;
+              
+              for (let i = 0; i < ledger.length; i++) {
+                total += ledger[i][1];
+              }
+              total= Number((total/100).toFixed(2))
             return  {   
                 name:group.name,
-                id:group.id
+                id:group.id,
+                total:total
             }
         })
        

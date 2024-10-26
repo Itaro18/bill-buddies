@@ -1,5 +1,3 @@
-// import { NEXT_AUTH_CONFIG } from "@/lib/auth";
-// import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from 'zod'
 import { ErrorHandler } from '@/lib/error';
@@ -9,6 +7,7 @@ const expenseEntrySchema=z.object({
     description:z.string(),
     amount:z.number(),
     payer:z.string(),
+    txnId:z.string(),
     grpId:z.string(),
     id:z.string(),
     name:z.string(),
@@ -22,12 +21,12 @@ const expenseEntrySchema=z.object({
 
 })
 const prisma=new PrismaClient()
+
 export async function POST(request:NextRequest){
-    // const session = await getServerSession(NEXT_AUTH_CONFIG);
     
     try{
         const body = await request.json();
-
+        console.log("here",body)
         const result = expenseEntrySchema.safeParse(body);
         
         if(!result.success){
@@ -40,43 +39,47 @@ export async function POST(request:NextRequest){
             );
         }
         
-        // console.log({
-        //     description:result.data.description,
-        //     amount:result.data.amount,
-        //     date: new Date(result.data.time),
-        //     paidById: result.data.id,
-        //     groupId:result.data.grpId,
-        //     userExpenses: {
-        //         create: result.data.userExpenses.map(ue => ({
-        //             userId: ue.id,
-        //             amount: parseFloat(ue.share)
-        //         }))
-        //     }
-        // })
 
         if(result.data.isSettlement){
             return NextResponse.json({ error: "Something went wrong! Please try again later" }, { status: 500 })
         }
         
-        const res=await prisma.expense.create({
-            data:{
-                description:result.data.description,
-                amount:result.data.amount*100,
-                date: new Date(result.data.time),
-                paidById: result.data.id,
-                groupId:result.data.grpId,
-                isSettlement:false,
-                userExpenses: {
-                    create: result.data.userExpenses.map(ue => ({
-                        userId: ue.id,
-                        amount: ue.share*100,
-                        groupId : result.data.grpId
-                    }))
+        const res=await prisma.$transaction(async (tx)=>{
+            await tx.userExpense.deleteMany({
+                where:{
+                    expenseId:result.data.txnId
                 }
-            },
-            include:{
-                userExpenses:true
-            }
+            })
+
+            await prisma.expense.update({
+                where:{
+                    id:result.data.txnId
+                },
+                data:{
+                    description:result.data.description,
+                    amount:result.data.amount*100,
+                    paidById: result.data.id,
+                    isSettlement:false,
+                },
+            })
+
+            await tx.userExpense.createMany({
+                data: result.data.userExpenses.map(ue => ({
+                    userId: ue.id,
+                    amount: ue.share*100,
+                    groupId : result.data.grpId,
+                    expenseId:result.data.txnId
+                }))
+            });
+
+            return tx.expense.findUnique({
+                where: {
+                  id: result.data.txnId
+                },
+                include: {
+                  userExpenses: true
+                }
+            });
         })
         
         if(!res){
@@ -88,14 +91,10 @@ export async function POST(request:NextRequest){
                 }
             );
         }
-        return NextResponse.json({message:"Transaction recorded Successfully"},{status:201})
+        return NextResponse.json({message:"Transaction Updated Successfully"},{status:201})
     }
     catch(e){
         return NextResponse.json({ error: "Something went wrong! Please try again later" }, { status: 500 })
 
     }
-    
-    
-
-
 }

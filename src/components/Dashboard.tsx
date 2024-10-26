@@ -27,6 +27,7 @@ export default function DashboardContent() {
   interface grp {
     id: string;
     name: string;
+    total:number
   }
   //    const session=  useSession();
   const {
@@ -98,8 +99,12 @@ export default function DashboardContent() {
 
       setGroups(response.data.names);
     }
-    fetchGroups();
+    fetchGroups();  
+    
   }, [disable,code]);
+
+  
+  
   return (
     <div className="w-4/5 sm:w-3/5 max-w-xl mt-24">
       <div className="flex my-8">
@@ -107,7 +112,7 @@ export default function DashboardContent() {
           <DialogTrigger asChild>
             <Button
               type="button"
-              className="mx-auto rounded-2xl  sm:h-12 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-xl"
+              className="mx-auto rounded-2xl  sm:h-12 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-md sm:text-xl"
             >
               Join Group
             </Button>
@@ -158,7 +163,7 @@ export default function DashboardContent() {
           <DialogTrigger asChild>
             <Button
               type="button"
-              className="mx-auto rounded-2xl  sm:h-12 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-xl"
+              className="mx-auto rounded-2xl  sm:h-12 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-md sm:text-xl"
             >
               Create Group
             </Button>
@@ -215,14 +220,15 @@ export default function DashboardContent() {
       </div>
 
       <div>
-        {groups.map((group, index) => (
-          <Group
+        {groups.map(async (group, index) => {
+          
+          return <Group
             title={group.name}
             key={index}
-            balance="100"
             grpId={group.id}
+            total={group.total}
           />
-        ))}
+})}
       </div>
     </div>
   );

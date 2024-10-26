@@ -25,6 +25,7 @@ type userTxn={
 }
 
 type outData={
+    txnId:string;
     time:Date;
     description:string;
     paidById:string;
@@ -43,6 +44,7 @@ function processTxns(userTxns:userTxn[],id:string){
 
     
     for(let i=0;i<userTxns.length;i++){
+        const txnId = userTxns[i].id;
         const time = userTxns[i].date;
         const description =userTxns[i].description;
         const paidById = userTxns[i].paidById;
@@ -59,7 +61,7 @@ function processTxns(userTxns:userTxn[],id:string){
             }
         }
         const userExpenses=userTxns[i].userExpenses
-        arr.push({time ,description,paidById,amount,share,isSettlement,paidFor,userExpenses})
+        arr.push({txnId,time ,description,paidById,amount,share,isSettlement,paidFor,userExpenses})
     }
 
     return arr;

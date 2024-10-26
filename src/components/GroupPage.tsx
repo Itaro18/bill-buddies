@@ -34,9 +34,9 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { z } from "zod";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Description } from "@radix-ui/react-dialog";
 
 type outData = {
+  txnId: string;
   time: Date;
   description: string;
   paidById: string;
@@ -44,10 +44,10 @@ type outData = {
   share: number;
   isSettlement: boolean;
   paidFor: string[];
-  userExpenses:{
-    userId:string;
-    amount:number;       
-}[]
+  userExpenses: {
+    userId: string;
+    amount: number;
+  }[];
 };
 
 export default function GroupPage({
@@ -323,10 +323,10 @@ export default function GroupPage({
           <p className="my-10">You are settled up with everyone </p>
         )}
       </div>
-      <div className="w-full flex justify-end gap-x-4">
+      <div className="w-full  sm:flex sm:justify-end gap-x-4">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
+            <Button className="m-4 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
               Settle
             </Button>
           </DialogTrigger>
@@ -411,7 +411,7 @@ export default function GroupPage({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096] ">
+            <Button className="m-4 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096] ">
               Add Buddy
             </Button>
           </DialogTrigger>
@@ -442,7 +442,7 @@ export default function GroupPage({
 
         <Dialog open={open} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
-            <Button className="rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
+            <Button className="m-3 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
               Add Transaction
             </Button>
           </DialogTrigger>
@@ -591,7 +591,7 @@ export default function GroupPage({
                   {(watchAmount - sum).toFixed(2)} left of{" "}
                   {watchAmount.toFixed(2)}
                 </p>
-                {watchAmount - sum > 0.01 ? (
+                {watchAmount - sum > 0.01 || watchAmount - sum < 0 ? (
                   <p className="text-red-400 my-2">
                     splits dont add up to total
                   </p>
@@ -601,6 +601,14 @@ export default function GroupPage({
               </div>
               <DialogFooter className="mx-auto">
                 <Button
+                  disabled={
+                    !(
+                      watchSplitEqually ||
+                      (watchAmount - sum < 0.01 && 
+                      watchAmount - sum >= 0 
+                      ) 
+                    )
+                  }
                   type="submit"
                   className="mx-auto rounded-2xl  sm:h-8 sm:px-8 shadow-[3px_3px_0px_1px_#718096] text-lg mt-4"
                 >
@@ -616,6 +624,7 @@ export default function GroupPage({
         {trasnactions.map((txn) => {
           return txn.isSettlement ? (
             <SettlementCard
+              txnId={txn.txnId}
               time={txn.time}
               paidBy={nameMap.get(txn.paidById)}
               totalAmt={txn.amount}
@@ -623,6 +632,7 @@ export default function GroupPage({
             ></SettlementCard>
           ) : (
             <TransactionCard
+              txnId={txn.txnId}
               time={txn.time}
               name={txn.description}
               paidBy={nameMap.get(txn.paidById)}
@@ -630,6 +640,7 @@ export default function GroupPage({
               yourShare={txn.paidById === info.id ? txn.share : -1 * txn.share}
               users={users}
               splits={txn.userExpenses}
+              grpId={id}
             ></TransactionCard>
           );
         })}
