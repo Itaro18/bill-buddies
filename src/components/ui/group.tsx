@@ -6,7 +6,7 @@ export default function Group({title,grpId,total}:{title:string,grpId:string,tot
     return <div  onClick={()=>{
        router.push(`/group/${grpId}`)
         
-    }} className=" cursor-pointer border-2 border-slate-700 dark:border-white w-full max-w-2xl grid grid-cols-4 gap-9 p-2 items-center rounded-md my-4 mx-auto">
+    }} className=" cursor-pointer border-2 border-slate-700 dark:border-white w-full max-w-2xl grid grid-cols-4 gap-9 p-2 items-center rounded-md my-6 mx-auto">
         <div className="w-14 sm:w-28 sm:m-1 relative aspect-square rounded-sm overflow-hidden ">
             <Image
             src="/image.png"

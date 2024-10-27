@@ -201,7 +201,7 @@ export default function TransactionCard({
     } else {
       // Reset form when dialog is closed (even without submission)
       reset();
-      setSum(totalAmt);
+      setSum(Number((totalAmt / 100).toFixed(2)));
       setOpen(false);
       setEdit(false);
     }
@@ -220,22 +220,22 @@ export default function TransactionCard({
               {paidBy} paid {formattedAmount}
             </p>
           </div>
-          <div className="col-span-3 sm:col-span-3">
+          <div className="col-span-3 sm:col-span-3 ">
             {yourShare > 0 ? (
-              <p className="text-sm text-green-400 sm:text-xl">
+              <p className="text-sm text-green-400 sm:text-xl ">
                 you lent {(yourShare / 100).toFixed(2)}
               </p>
             ) : yourShare === 0 ? (
-              <p className="text-slate-400">not involved</p>
+              <p className="text-slate-400 ">not involved</p>
             ) : (
-              <p className="text-md text-red-400 sm:text-xl">
+              <p className="text-md text-red-400 sm:text-xl ">
                 you owe {((-1 * yourShare) / 100).toFixed(2)}
               </p>
             )}
           </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="w-4/5">
+      <DialogContent className="w-11/12 sm:4/5">
         <form onSubmit={handleSubmit(update)}>
           <DialogHeader>
             <DialogTitle>Tranaction Details</DialogTitle>
@@ -302,7 +302,7 @@ export default function TransactionCard({
                 )}
               </div>
               <p className="text-center my-3 text-md">{customFormat}</p>
-              <div className="border-b-2 border-red-500 rounded-md my-4 mx-8"></div>
+              <div className="border-b-2 border-red-500 rounded-md my-6 sm:my-4 mx-4 sm:mx-8"></div>
               <div>
                 {userMap.map((user) => {
                   return (

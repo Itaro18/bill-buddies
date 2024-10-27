@@ -265,7 +265,7 @@ export default function GroupPage({
   }
 
   return (
-    <div className="w-4/5 sm:w-3/5 sm:max-w-2xl py-10 mt-24">
+    <div className="w-9/10 sm:w-3/5 sm:max-w-2xl py-10 mt-24">
       <div className="flex justify-center  w-full ">
         <div className="w-1/3 ">
           <div className="w-16 sm:w-28 relative aspect-square rounded-sm overflow-hidden mx-auto">
@@ -323,10 +323,10 @@ export default function GroupPage({
           <p className="my-10">You are settled up with everyone </p>
         )}
       </div>
-      <div className="w-full  sm:flex sm:justify-end gap-x-4">
+      <div className="w-full  flex justify-center sm:justify-end sm:gap-x-4">
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="m-4 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
+            <Button className="m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
               Settle
             </Button>
           </DialogTrigger>
@@ -411,7 +411,7 @@ export default function GroupPage({
         </Dialog>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="m-4 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096] ">
+            <Button className="m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096] ">
               Add Buddy
             </Button>
           </DialogTrigger>
@@ -442,11 +442,11 @@ export default function GroupPage({
 
         <Dialog open={open} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
-            <Button className="m-3 sm:m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
+            <Button className="m-2 rounded-2xl shadow-[3px_3px_0px_1px_#718096]  ">
               Add Transaction
             </Button>
           </DialogTrigger>
-          <DialogContent className="w-4/5 sm:max-w-[425px] bg-white text-black dark:text-white dark:bg-black rounded-md">
+          <DialogContent className="w-11/12 sm:max-w-[425px] bg-white text-black dark:text-white dark:bg-black rounded-md">
             <form onSubmit={handleSubmit(onSubmit)}>
               <DialogHeader>
                 <DialogTitle>Add Transaction</DialogTitle>
@@ -620,7 +620,7 @@ export default function GroupPage({
         </Dialog>
       </div>
 
-      <div className="my-4 px-10">
+      <div className="my-4 px-5 sm:px-10">
         {trasnactions.map((txn) => {
           return txn.isSettlement ? (
             <SettlementCard
