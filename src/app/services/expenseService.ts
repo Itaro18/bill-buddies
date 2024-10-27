@@ -58,7 +58,7 @@ function ledgerMaker(arr: { paidFor: string, payer: string | undefined, amt: num
 }
 
 
-export async function simplify(grpId:string){
+export async function simplify(grpId:string,userId:string){
     try{
         const check = await prisma.user.findUnique({
             where: {
@@ -72,7 +72,7 @@ export async function simplify(grpId:string){
         })
         
         if (!check) {
-            return NextResponse.json({ error: "Invalid group ID or user ID" }, { status: 404 })
+            return []
         }
         const txns = await prisma.userExpense.findMany({
             where: {
@@ -111,10 +111,9 @@ export async function simplify(grpId:string){
         result.forEach((value, key) => {
             res.push([key,value])
         })
+        return res
     }
     catch(e){
-        return{
-            error:"something went wrong"
-        }
+        return []
     }
 }

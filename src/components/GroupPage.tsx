@@ -265,7 +265,7 @@ export default function GroupPage({
   }
 
   return (
-    <div className="w-4/5 sm:w-3/5 max-w-2xl py-10 mt-24">
+    <div className="w-4/5 sm:w-3/5 sm:max-w-2xl py-10 mt-24">
       <div className="flex justify-center  w-full ">
         <div className="w-1/3 ">
           <div className="w-16 sm:w-28 relative aspect-square rounded-sm overflow-hidden mx-auto">
@@ -281,21 +281,21 @@ export default function GroupPage({
         <div className="self-end w-2/3">
           <h1 className="text-3xl sm:text-5xl text-red-600 mb-1">{title}</h1>
           {total > 0 ? (
-            <p className="text-xl text-green-400 sm:text-2xl">
+            <p className="text-md text-green-400 sm:text-2xl">
               You are owed {(total / 100).toFixed(2)} overall
             </p>
           ) : total === 0 ? (
-            <p className="text-xl text-slate-400 sm:text-2xl">
+            <p className="text-md text-slate-400 sm:text-2xl">
               You are all settled up
             </p>
           ) : (
-            <p className="text-xl text-red-400 sm:text-2xl">
+            <p className="text-md text-red-400 sm:text-2xl">
               You owe {((-1 * total) / 100).toFixed(2)} overall
             </p>
           )}
         </div>
       </div>
-      <div className="w-full px-14 my-4 grid gap-1 sm:text-xl">
+      <div className="w-full px-6 sm:px-16 my-4 grid gap-1 sm:text-xl">
         {ledger.map((entry, index) => {
           const name = nameMap.get(entry[0]);
           const amt = entry[1] > 0 ? entry[1] / 100 : (entry[1] / 100) * -1;

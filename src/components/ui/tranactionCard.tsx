@@ -210,7 +210,7 @@ export default function TransactionCard({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <div className="grid grid-cols-10 gap-x-4 items-center my-2  border-t-2 cursor-pointer">
+        <div className="grid grid-cols-10 gap-x-4 items-center my-2  border-t-2 cursor-pointer py-1">
           <div className="col-span-2 sm:col-span-1 p-1 mr-2 text-center">
             <p className="text-lg sm:text-2xl">{formattedDate}</p>
           </div>

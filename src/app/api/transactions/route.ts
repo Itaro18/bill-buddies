@@ -106,24 +106,6 @@ export async function GET(){
         })
 
         if(txns){
-            // let userTxns = await prisma.userExpense.findMany({
-            //     where:{
-            //         groupId:grpId,
-            //     },
-            //     include:{
-            //         expense:{
-            //             select:{
-            //                 description:true,
-            //                 amount:true,
-            //                 date:true,
-            //                 paidById:true
-            //             }
-            //         }
-            //     },
-                
-            // })
-            // to-do remove after advanced split
-            // userTxns = userTxns?.filter((txn) => txn?.userId === session.user.id);
             const res = processTxns(txns,userId) 
 
             res.sort((a:outData,b:outData) =>  b.time.getTime() - a.time.getTime() )
