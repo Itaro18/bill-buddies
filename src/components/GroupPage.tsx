@@ -152,7 +152,7 @@ export default function GroupPage({
   const onSubmit = async (data: expenseType) => {
     try {
       const userExpenses: { id: string; share: number }[] = Object.entries(
-        data.splits
+        data.splits,
       ).map(([id, share]) => ({
         id,
         share,
@@ -485,7 +485,7 @@ export default function GroupPage({
                       } else {
                         setValue(
                           "amount",
-                          parseFloat(parseFloat(value).toFixed(2))
+                          parseFloat(parseFloat(value).toFixed(2)),
                         );
                       }
                     }}
@@ -527,7 +527,7 @@ export default function GroupPage({
                             const splitAmount =
                               Math.round(
                                 (watchAmount / users.length + Number.EPSILON) *
-                                  100
+                                  100,
                               ) / 100;
                             users.forEach((user) => {
                               setValue(`splits.${user.id}`, splitAmount, {
@@ -573,11 +573,11 @@ export default function GroupPage({
                           const value = e.target.value;
                           setValue(
                             `splits.${user.id}`,
-                            Number(Number(value).toFixed(2))
+                            Number(Number(value).toFixed(2)),
                           );
                           const totalSplit = Object.values(watchSplits).reduce(
                             (sum, value) => sum + (Number(value) || 0),
-                            0
+                            0,
                           );
                           setSum(totalSplit);
                         }}
@@ -604,9 +604,7 @@ export default function GroupPage({
                   disabled={
                     !(
                       watchSplitEqually ||
-                      (watchAmount - sum < 0.01 && 
-                      watchAmount - sum >= 0 
-                      ) 
+                      (watchAmount - sum < 0.01 && watchAmount - sum >= 0)
                     )
                   }
                   type="submit"
@@ -621,29 +619,37 @@ export default function GroupPage({
       </div>
 
       <div className="my-4 px-5 sm:px-10">
-        {trasnactions.length>0 ? (trasnactions.map((txn) => {
-          return txn.isSettlement ? (
-            <SettlementCard
-              txnId={txn.txnId}
-              time={txn.time}
-              paidBy={nameMap.get(txn.paidById)}
-              totalAmt={txn.amount}
-              paidFor={nameMap.get(txn.paidFor[0])}
-            ></SettlementCard>
-          ) : (
-            <TransactionCard
-              txnId={txn.txnId}
-              time={txn.time}
-              name={txn.description}
-              paidBy={nameMap.get(txn.paidById)}
-              totalAmt={txn.amount}
-              yourShare={txn.paidById === info.id ? txn.share : -1 * txn.share}
-              users={users}
-              splits={txn.userExpenses}
-              grpId={id}
-            ></TransactionCard>
-          );
-        })):(<p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300">No Transactions Yet</p>)}
+        {trasnactions.length > 0 ? (
+          trasnactions.map((txn) => {
+            return txn.isSettlement ? (
+              <SettlementCard
+                txnId={txn.txnId}
+                time={txn.time}
+                paidBy={nameMap.get(txn.paidById)}
+                totalAmt={txn.amount}
+                paidFor={nameMap.get(txn.paidFor[0])}
+              ></SettlementCard>
+            ) : (
+              <TransactionCard
+                txnId={txn.txnId}
+                time={txn.time}
+                name={txn.description}
+                paidBy={nameMap.get(txn.paidById)}
+                totalAmt={txn.amount}
+                yourShare={
+                  txn.paidById === info.id ? txn.share : -1 * txn.share
+                }
+                users={users}
+                splits={txn.userExpenses}
+                grpId={id}
+              ></TransactionCard>
+            );
+          })
+        ) : (
+          <p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300">
+            No Transactions Yet
+          </p>
+        )}
       </div>
       <Toaster
         toastOptions={{

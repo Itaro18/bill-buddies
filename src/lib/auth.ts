@@ -1,13 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import CredentialsProvider from 'next-auth/providers/credentials';
+import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 // import bcrypt from "bcrypt"
 // import {
 //   SigninSchema,
 // } from '@/lib/validators/auth.validator';
 
-import { ErrorHandler } from './error';
+import { ErrorHandler } from "./error";
 import { SessionStrategy } from "next-auth";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 const prisma = new PrismaClient();
@@ -32,7 +32,7 @@ export const NEXT_AUTH_CONFIG = {
     //     });
 
     //     if (!result.success) {
-          
+
     //       throw new ErrorHandler(
     //         'Input Validation failed',
     //         'VALIDATION_ERROR',
@@ -41,7 +41,7 @@ export const NEXT_AUTH_CONFIG = {
     //         }
     //       );
     //     }
-        
+
     //     const existingUser = await prisma.user.findFirst({
     //       where: {
     //         email: result.data.email
@@ -50,7 +50,7 @@ export const NEXT_AUTH_CONFIG = {
 
     //     if (existingUser) {
     //       const passwordValidation = await bcrypt.compare(result.data.password, existingUser.password);
-          
+
     //       if (passwordValidation) {
     //         return {
     //           id: existingUser.id.toString(),
@@ -69,7 +69,7 @@ export const NEXT_AUTH_CONFIG = {
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
       allowDangerousEmailAccountLinking: true,
-    })
+    }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" as SessionStrategy },
@@ -91,6 +91,6 @@ export const NEXT_AUTH_CONFIG = {
     },
   },
   pages: {
-    signIn: '/signin',
+    signIn: "/signin",
   },
-}
+};

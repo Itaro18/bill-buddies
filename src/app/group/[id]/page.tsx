@@ -45,10 +45,10 @@ export default async function Group({ params }: { params: { id: string } }) {
     },
   });
 
-  const Users = content?.users.map(user => ({
+  const Users = content?.users.map((user) => ({
     id: user.id,
-    name: user.name ?? 'GuestUser', 
-    email: user.email ?? '', 
+    name: user.name ?? "GuestUser",
+    email: user.email ?? "",
   }));
 
   return (

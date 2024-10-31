@@ -134,7 +134,7 @@ export default function TransactionCard({
   const update = async (data: expenseType) => {
     try {
       const userExpenses: { id: string; share: number }[] = Object.entries(
-        data.splits
+        data.splits,
       ).map(([id, share]) => ({
         id,
         share,
@@ -269,7 +269,7 @@ export default function TransactionCard({
                     } else {
                       setValue(
                         "amount",
-                        parseFloat(parseFloat(value).toFixed(2))
+                        parseFloat(parseFloat(value).toFixed(2)),
                       );
                     }
                   }}
@@ -329,11 +329,11 @@ export default function TransactionCard({
                           const value = e.target.value;
                           setValue(
                             `splits.${user.id}`,
-                            Number(Number(value).toFixed(2))
+                            Number(Number(value).toFixed(2)),
                           );
                           const totalSplit = Object.values(watchSplits).reduce(
                             (sum, value) => sum + (Number(value) || 0),
-                            0
+                            0,
                           );
                           setSum(totalSplit);
                         }}

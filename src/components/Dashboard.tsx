@@ -214,16 +214,23 @@ export default function DashboardContent() {
       </div>
 
       <div>
-        {groups.length >0 ? (groups.map(async (group, index) => {
-          return (
-            <Group
-              title={group.name}
-              key={index}
-              grpId={group.id}
-              total={group.total}
-            />
-          );
-        })):(<p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300"> Join a Group or Create your group </p>)}
+        {groups.length > 0 ? (
+          groups.map(async (group, index) => {
+            return (
+              <Group
+                title={group.name}
+                key={index}
+                grpId={group.id}
+                total={group.total}
+              />
+            );
+          })
+        ) : (
+          <p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300">
+            {" "}
+            Join a Group or Create your group{" "}
+          </p>
+        )}
       </div>
     </div>
   );
