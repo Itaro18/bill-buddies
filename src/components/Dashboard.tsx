@@ -102,7 +102,7 @@ export default function DashboardContent() {
   }, [disable, code]);
 
   return (
-    <div className="w-4/5 sm:w-3/5 max-w-xl mt-24">
+    <div className="w-4/5 sm:w-3/5 max-w-xl ">
       <div className="flex my-8">
         <Dialog>
           <DialogTrigger asChild>
@@ -214,7 +214,7 @@ export default function DashboardContent() {
       </div>
 
       <div>
-        {groups.map(async (group, index) => {
+        {groups.length >0 ? (groups.map(async (group, index) => {
           return (
             <Group
               title={group.name}
@@ -223,7 +223,7 @@ export default function DashboardContent() {
               total={group.total}
             />
           );
-        })}
+        })):(<p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300"> Join a Group or Create your group </p>)}
       </div>
     </div>
   );

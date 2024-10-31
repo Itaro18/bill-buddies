@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,38 +10,67 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  refresh_token_expires_in Int?
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type              String?
+  scope                   String?
+  id_token                String? @db.Text
+  session_state           String?
+  user                    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
-  id           String        @id @default(uuid())
+  id            String        @id @default(cuid())
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  groups        Group[]       @relation("UserGroups")
+  expenses      Expense[]
+  userExpenses  UserExpense[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Group {
+  id           String        @id @default(cuid())
   name         String
-  email        String        @unique
-  password     String
-  groups       Group[]       @relation("UserGroups")
+  users        User[]        @relation("UserGroups")
   expenses     Expense[]
   userExpenses UserExpense[]
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
-}
-
-model Group {
-  id           String    @id @default(uuid())
-  name         String
-  users        User[]    @relation("UserGroups")
-  expenses     Expense[]
-  userExpenses UserExpense[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  inviteCode   String    @default("")
-  inviteExpiry DateTime  @default(now())
+  inviteCode   String        @default("")
+  inviteExpiry DateTime      @default(now())
 }
 
 model Expense {
-  id           String        @id @default(uuid())
+  id           String        @id @default(cuid())
   description  String
   amount       Float
   date         DateTime
-  paidBy       User          @relation(fields: [paidById], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  paidBy       User          @relation(fields: [paidById], references: [id], onDelete: Cascade, onUpdate: Cascade)
   paidById     String
-  group        Group         @relation(fields: [groupId], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  group        Group         @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   groupId      String
   userExpenses UserExpense[]
   isSettlement Boolean
@@ -53,14 +79,14 @@ model Expense {
 }
 
 model UserExpense {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id],onDelete: Cascade, onUpdate: Cascade)
-  userId    String
-  expense   Expense  @relation(fields: [expenseId], references: [id],onDelete: Cascade, onUpdate: Cascade)
-  expenseId String
-  group     Group    @relation(fields: [groupId], references: [id],onDelete: Cascade, onUpdate: Cascade)
-  groupId   String
-  amount    Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId     String
+  expense    Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  expenseId  String
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  groupId    String
+  amount     Float
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

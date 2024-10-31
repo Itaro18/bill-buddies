@@ -10,7 +10,7 @@ export default async function Dashboard() {
   }
   return (
     
-    <div className="flex w-full justify-center ">
+    <div className="flex flex-col w-full items-center justify-center ">
       {/* <div>
       {JSON.stringify(session?.user)}
     </div> */}

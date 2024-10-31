@@ -23,44 +23,44 @@ import { Toaster, toast } from 'sonner'
 export default function Signin(){
   const router = useRouter();
  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SigninSchemaType>({
-    resolver: zodResolver(SigninSchema)
-  });
-  const onSubmit = async (data:SigninSchemaType) => {
-    // Handle form submission
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   formState: { errors },
+  // } = useForm<SigninSchemaType>({
+  //   resolver: zodResolver(SigninSchema)
+  // });
+  // const onSubmit = async (data:SigninSchemaType) => {
+  //   // Handle form submission
     
      
-    const res = await signIn("credentials", {
-        email: data.email,
-        password: data.password,
-        redirect: false,
-    });
+  //   const res = await signIn("credentials", {
+  //       email: data.email,
+  //       password: data.password,
+  //       redirect: false,
+  //   });
     
-    if(!res?.error){
-      router.push("/dashboard")
-    }
-    if(res?.error){
+  //   if(!res?.error){
+  //     router.push("/dashboard")
+  //   }
+  //   if(res?.error){
       
-      toast.error(res.error,{
-        duration: 5000,
-      })
+  //     toast.error(res.error,{
+  //       duration: 5000,
+  //     })
      
-    }
+  //   }
     
-  };
+  // };
 
     
-    // const [email,setEmail]=useState('');
-    // const [password,setPassword]=useState('');
-    const [showPassowrd,setShowPassword]=useState(false)
+  //   // const [email,setEmail]=useState('');
+  //   // const [password,setPassword]=useState('');
+  //   const [showPassowrd,setShowPassword]=useState(false)
  return (
 <main className="flex items-center justify-center w-full h-screen ">   
 
- <section className="flex flex-col h-1/2  w-1/2 items-center justify-center ">
+ {/* <section className="flex flex-col h-1/2  w-1/2 items-center justify-center ">
  <form onSubmit={handleSubmit(onSubmit)}>
 
     <Card className="w-[380px] mb-8 border-0 ">
@@ -144,14 +144,21 @@ export default function Signin(){
     </Card>
     </form>
         
-    <Separator className="w-1/4 mb-4"/>
-
-    <Button className="w-[340px] border text-zinc-800 border-zinc-800 bg-red-500 hover:bg-red-300 cursor-pointer" onClick={async () => {
-        // await signIn("google");
-    }}>Login with google
-    </Button>
+    <Separator className="w-1/4 mb-4"/> */}
+    <div className="border-2 border-gray-500 p-5 rounded-md">   
+      <Button className="w-[340px] border text-zinc-800 border-zinc-800 bg-red-500 hover:bg-red-300 cursor-pointer" onClick={async () => {
+        await signIn("google" ,{redirectTo :"/dashboard"});
+        }}>Login with google
+      </Button>
+      <Separator className="w-3/4 my-4 mx-auto"/> 
+      <p className="mx-auto">
+        More options coming soon ...
+      </p>
+      
+    </div>
     
-    </section>
+    
+    {/* </section> */}
     </main>
  )
 }

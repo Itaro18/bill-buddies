@@ -265,7 +265,7 @@ export default function GroupPage({
   }
 
   return (
-    <div className="w-9/10 sm:w-3/5 sm:max-w-2xl py-10 mt-24">
+    <div className="w-9/10 sm:w-3/5 sm:max-w-2xl py-10 ">
       <div className="flex justify-center  w-full ">
         <div className="w-1/3 ">
           <div className="w-16 sm:w-28 relative aspect-square rounded-sm overflow-hidden mx-auto">
@@ -621,7 +621,7 @@ export default function GroupPage({
       </div>
 
       <div className="my-4 px-5 sm:px-10">
-        {trasnactions.map((txn) => {
+        {trasnactions.length>0 ? (trasnactions.map((txn) => {
           return txn.isSettlement ? (
             <SettlementCard
               txnId={txn.txnId}
@@ -643,7 +643,7 @@ export default function GroupPage({
               grpId={id}
             ></TransactionCard>
           );
-        })}
+        })):(<p className="flex justify-center mt-20 mx-auto text-2xl text-indigo-300">No Transactions Yet</p>)}
       </div>
       <Toaster
         toastOptions={{

@@ -21,7 +21,7 @@ export default async function Home() {
 
   
   return (
-    <div className="h-screen w-4/5 flex flex-col justify-center items-center">
+    <div className="h-screen  flex flex-col justify-center items-center relative sm:static">
       <Appbar/>
       <Homepage/>
     </div>

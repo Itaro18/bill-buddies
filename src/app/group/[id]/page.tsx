@@ -45,12 +45,18 @@ export default async function Group({ params }: { params: { id: string } }) {
     },
   });
 
+  const Users = content?.users.map(user => ({
+    id: user.id,
+    name: user.name ?? 'GuestUser', 
+    email: user.email ?? '', 
+  }));
+
   return (
-    <div className="flex w-full justify-center ">
+    <div className="flex flex-col items-center w-full justify-center">
       <Menubar />
       <GroupPage
         title={content?.name || " "}
-        users={content?.users || []}
+        users={Users || []}
         id={params.id || ""}
       />
     </div>

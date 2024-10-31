@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 
 export default function Group({title,grpId,total}:{title:string,grpId:string,total:number}){
+    title=title[0].toUpperCase() + title.slice(1).toLowerCase();
     const router = useRouter()
     return <div  onClick={()=>{
        router.push(`/group/${grpId}`)
@@ -17,7 +18,7 @@ export default function Group({title,grpId,total}:{title:string,grpId:string,tot
             />
         </div>
         <div className='col-span-3'>
-            <h1 className='text-2xl sm:text-5xl text-red-600 mb-1 '>{title}</h1>
+            <h1 className='text-2xl sm:text-4xl text-red-600 mb-1 '>{title}</h1>
             {total > 0 ? (
                 <p className="text-md text-green-400 sm:text-xl">
                 You are owed {(total / 100).toFixed(2)} overall
