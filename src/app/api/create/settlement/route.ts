@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       { message: "Setllement recorded Successfully" },
       { status: 201 },
     );
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json(
       { error: "Something went wrong! Please try again later" },
       { status: 500 },
