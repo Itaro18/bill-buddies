@@ -1,11 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH_CONFIG } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { simplify } from "@/app/services/expenseService";
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-const prisma = new PrismaClient();
 
 /* Todo add payerId to userExpense */
 

@@ -1,29 +1,13 @@
 "use client";
-import React, { useState } from "react";
+
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "./ui/separator";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  SigninSchema,
-  SigninSchemaType,
-} from "@/lib/validators/auth.validator";
-import { Toaster, toast } from "sonner";
+
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export default function Signin() {
-  const router = useRouter();
+
 
   // const {
   //   register,

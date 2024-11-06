@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { NEXT_AUTH_CONFIG } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 import { NextResponse } from "next/server";
-import { split } from "postcss/lib/list";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 
 type userTxn = {

@@ -1,13 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 // import bcrypt from "bcrypt"
 // import {
 //   SigninSchema,
 // } from '@/lib/validators/auth.validator';
-
-import { ErrorHandler } from "./error";
 import { SessionStrategy } from "next-auth";
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 const prisma = new PrismaClient();
@@ -78,11 +75,11 @@ export const NEXT_AUTH_CONFIG = {
       return token;
     },
     async session({ session, token }: any) {
-      const user = await prisma.user.findUnique({
-        where: {
-          id: token.sub,
-        },
-      });
+      // const user = await prisma.user.findUnique({
+      //   where: {
+      //     id: token.sub,
+      //   },
+      // });
       if (token) {
         session.accessToken = token.accessToken;
         session.user.id = token.sub;

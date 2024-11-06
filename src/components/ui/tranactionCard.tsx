@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "./button";
 import axios from "axios";
-import { Toaster, toast } from "sonner";
+import {  toast } from "sonner";
 import { useState } from "react";
 import { expenseSchema, expenseType } from "@/lib/validators/create.validator";
 import { useForm } from "react-hook-form";
@@ -52,15 +52,6 @@ export default function TransactionCard({
   const formattedName = name[0].toUpperCase() + name.slice(1).toLowerCase();
   const formattedDate = month + " " + day;
   const formattedAmount = (totalAmt / 100).toFixed(2);
-  const detailedDate = date.toLocaleString("en-US", {
-    weekday: "long", // "Friday"
-    hour: "numeric", // "2"
-    minute: "2-digit", // "00"
-    hour12: true, // for AM/PM
-    day: "numeric", // "1"
-    month: "short", // "Feb"
-    year: "numeric", // "2013"
-  });
 
   // OR more precisely control the format:
   const weekday = date.toLocaleString("en-US", { weekday: "long" });
@@ -115,7 +106,6 @@ export default function TransactionCard({
   const {
     register,
     handleSubmit,
-    control,
     watch,
     setValue,
     reset,

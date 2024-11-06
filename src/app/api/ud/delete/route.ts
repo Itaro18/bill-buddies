@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { boolean, z } from "zod";
+import { z } from "zod";
 import { ErrorHandler } from "@/lib/error";
 import { PrismaClient } from "@prisma/client";
 
@@ -29,11 +29,7 @@ export async function POST(req: NextRequest) {
     });
     console.log("here");
     if (verifyTxn) {
-      const del = await prisma.expense.delete({
-        where: {
-          id: result.data.txnId,
-        },
-      });
+      
       return NextResponse.json(
         { message: "Transaction deleted sucessfully" },
         { status: 202 },

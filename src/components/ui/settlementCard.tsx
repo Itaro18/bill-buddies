@@ -1,5 +1,4 @@
 export default function SettlementCard({
-  txnId,
   time,
   paidBy,
   totalAmt,
