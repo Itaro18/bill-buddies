@@ -81,8 +81,10 @@ export const NEXT_AUTH_CONFIG = {
       //   },
       // });
       if (token) {
+        // console.log(token)
         session.accessToken = token.accessToken;
         session.user.id = token.sub;
+        // console.log(session.user)
       }
       return session;
     },

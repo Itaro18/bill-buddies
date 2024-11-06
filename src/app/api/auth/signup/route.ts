@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 // import CredentialsProvider from 'next-auth/providers/credentials';
 // import GoogleProvider from "next-auth/providers/google";
-import bcrypt from "bcrypt";
+
 import { SignupSchema } from "@/lib/validators/auth.validator";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
@@ -27,12 +27,11 @@ export async function POST(request: NextRequest) {
     if (existingUser) {
       throw new ErrorHandler("User already Exists", "AUTHENTICATION_FAILED");
     } else {
-      const hashedPassword = await bcrypt.hash(result.data.password, 10);
       const user = await prisma.user.create({
         data: {
           email: result.data.email,
           name: result.data.name,
-          password: hashedPassword,
+         
         },
       });
       if (!user) {

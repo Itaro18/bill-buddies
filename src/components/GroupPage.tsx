@@ -72,9 +72,23 @@ export default function GroupPage({
     }),
   });
 
-  const info: { name: string; email: string; id: string } =
-    session.data?.user || {};
+  // const info: { name: string; email: string; id: string } =
+  //   session.data?.user || {};
+  interface SessionUser {
+    name: string;
+    email: string;
+    id: string;
+  }
+  
+  const userInfo = session.data?.user as SessionUser;
+  
+  const info: { name: string; email: string; id: string } = {
+    name: userInfo?.name || '',
+    email: userInfo?.email || '',
+    id: userInfo?.id || ''
+  };
 
+  
   users = users.map((user) => {
     if (user?.id === info.id) {
       return { ...user, name: `You (${user.name})` };
@@ -263,7 +277,7 @@ export default function GroupPage({
       });
     }
   }
-
+  console.log("user here",session.data?.user)
   return (
     <div className="w-9/10 sm:w-3/5 sm:max-w-2xl py-10 ">
       <div className="flex justify-center  w-full ">
