@@ -277,7 +277,7 @@ export default function GroupPage({
       });
     }
   }
-  console.log("user here",session.data?.user)
+  
   return (
     <div className="w-9/10 sm:w-3/5 sm:max-w-2xl py-10 ">
       <div className="flex justify-center  w-full ">
@@ -638,6 +638,7 @@ export default function GroupPage({
         {trasnactions.length>0 ? (trasnactions.map((txn) => {
           return txn.isSettlement ? (
             <SettlementCard
+              key={txn.txnId}
               txnId={txn.txnId}
               time={txn.time}
               paidBy={nameMap.get(txn.paidById)}
@@ -646,6 +647,7 @@ export default function GroupPage({
             ></SettlementCard>
           ) : (
             <TransactionCard
+              key={txn.txnId}
               txnId={txn.txnId}
               time={txn.time}
               name={txn.description}

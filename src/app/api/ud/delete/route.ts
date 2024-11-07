@@ -29,11 +29,24 @@ export async function POST(req: NextRequest) {
     });
     console.log("here");
     if (verifyTxn) {
+        const deleteTxn = await prisma.expense.delete({
+        where: {
+            id: result.data.txnId,
+        },
+      })
+      if(deleteTxn){
+        return NextResponse.json(
+            { message: "Transaction deleted sucessfully" },
+            { status: 202 },
+          );
+      }
+      else{
+        return NextResponse.json(
+            { error: "Something went wrong! Please try again later" },
+            { status: 500 },
+          );
+      }
       
-      return NextResponse.json(
-        { message: "Transaction deleted sucessfully" },
-        { status: 202 },
-      );
     }
 
     return NextResponse.json(
