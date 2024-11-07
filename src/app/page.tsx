@@ -17,7 +17,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="h-screen  flex flex-col justify-center items-center relative sm:static">
+    <div className="h-screen  flex flex-col items-center relative sm:static">
       <Appbar />
       <Homepage />
     </div>
